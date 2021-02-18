@@ -1,0 +1,19 @@
+{
+  "name": "simple",
+  "private": true,
+  "author": {
+    "name": "hadenpf"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "api": "yarn workspace @simple/api",
+    "app": "yarn workspace @simple/app"
+  },
+  "workspaces": [
+    "app",
+    "api"
+  ],
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}

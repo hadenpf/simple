@@ -1,0 +1,6 @@
+# build/env
+.next/
+.vercel/
+/out/
+/build/
+*.pem
