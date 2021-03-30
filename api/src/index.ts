@@ -7,6 +7,7 @@ import { Accounts } from './modules/account'
 import { accountRoutes } from './routes/accounts'
 import { response } from './utils/response'
 import { NotFoundError } from './utils/error'
+import { pageRoutes } from './routes/pages'
 
 // load env vars from file
 dotenv.config({
@@ -22,6 +23,7 @@ class APIApplication {
 
     this.server.use(bodyParser.json())
     this.server.use('/accounts', accountRoutes())
+    this.server.use('/pages', pageRoutes())
     // 404 handler
     this.server.use(async (req, res, next) => {
       next(new NotFoundError('Route does not exist'))

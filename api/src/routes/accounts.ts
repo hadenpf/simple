@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as yup from 'yup'
-import { Accounts } from '../modules/account'
+import { Accounts, IAccount } from '../modules/account'
+import { Pages } from '../modules/page'
 import { GenericRequestError, NotFoundError } from '../utils/error'
 import { response } from '../utils/response'
 
@@ -29,7 +30,7 @@ export function accountRoutes(): express.Router {
         await yup
           .object()
           .defined()
-          .shape({
+          .shape<{ [key in keyof IAccount]: any }>({
             username: yup.string().required(),
             display_name: yup.string().notRequired(),
           })
@@ -50,7 +51,6 @@ export function accountRoutes(): express.Router {
         const {
           params: { id },
         } = req
-        if (!id) throw new GenericRequestError('No id provided')
 
         const account = await Accounts.getByName(id)
 
@@ -64,7 +64,6 @@ export function accountRoutes(): express.Router {
         const {
           params: { id },
         } = req
-        if (!id) throw new GenericRequestError('No id provided')
 
         const account = await Accounts.getByName(id)
         const deletion = await account.delete()
@@ -78,6 +77,22 @@ export function accountRoutes(): express.Router {
         next(err)
       }
     })
+
+  accounts.route('/:id/pages').get(async (req, res, next) => {
+    try {
+      const {
+        params: { id },
+      } = req
+
+      const account = await Accounts.getByName(id)
+      const pages = await Pages.getByUser(account.username)
+
+      if (pages.length > 0) return res.json(response('success', pages))
+      else throw new NotFoundError('No pages exist for this user')
+    } catch (err) {
+      next(err)
+    }
+  })
 
   return accounts
 }
